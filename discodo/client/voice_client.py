@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any, Dict
 
 from ..utils import EventDispatcher
 from .http import HTTPClient
@@ -51,6 +52,18 @@ class VoiceClient:
         await self.send(Operation, Data)
 
         return await Future
+
+    async def getContext(self, ws: bool = True) -> dict:
+        if ws:
+            return (await self.query("getVCContext"))["context"]
+
+        return await self.http.getContext()
+
+    async def setContext(self, Context: Dict[Any, Any], ws: bool = True) -> dict:
+        if ws:
+            return (await self.query("setVCContext", {"context": Context}))["context"]
+
+        return await self.http.setSource(Context)
 
     async def getSource(self, Query: str, ws: bool = True) -> dict:
         if ws:

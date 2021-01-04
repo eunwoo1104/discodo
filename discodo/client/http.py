@@ -1,5 +1,5 @@
 from http.client import responses
-from typing import Union
+from typing import Any, Dict, Union
 
 import aiohttp
 
@@ -36,11 +36,23 @@ class HTTPClient:
 
                 raise HTTPException(response.status)
 
-    async def getSource(self) -> dict:
-        return (await self.fetch("GET", "/getSource"))["source"]
+    async def getContext(self) -> dict:
+        return (await self.fetch("GET", "/getVCContext"))["context"]
 
-    async def searchSource(self) -> list:
-        return (await self.fetch("GET", "/searchSource"))["sources"]
+    async def setContext(self, Context: Dict[Any, Any]) -> dict:
+        return (
+            await self.fetch("POST", "/setVCContext", json={"source": dict(Context)})
+        )["context"]
+
+    async def getSource(self, query: str) -> dict:
+        return (await self.fetch("GET", "/getSource", params={"query": str(query)}))[
+            "source"
+        ]
+
+    async def searchSource(self, query: str) -> list:
+        return (await self.fetch("GET", "/searchSource", params={"query": str(query)}))[
+            "source"
+        ]
 
     async def putSource(self, source: dict) -> Union[int, list]:
         return (await self.fetch("POST", "/putSource", json={"source": dict(source)}))[

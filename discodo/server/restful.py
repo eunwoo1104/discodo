@@ -70,6 +70,25 @@ def JSONResponse(
     )
 
 
+@app.get("/getVCContext")
+@authorized
+@need_voiceclient
+async def getVCContext(request, VoiceClient) -> JSONResponse:
+    return JSONResponse({"context": VoiceClient.Context})
+
+
+@app.post("/setVCContext")
+@authorized
+@need_voiceclient
+async def setVCContext(request, VoiceClient) -> JSONResponse:
+    if "context" not in request.json:
+        abort(400, "Bad data `context`")
+
+    VoiceClient.Context = dict(request.json["context"])
+
+    return JSONResponse({"context": VoiceClient.Context})
+
+
 @app.get("/getSource")
 @authorized
 async def getSource(request) -> JSONResponse:
